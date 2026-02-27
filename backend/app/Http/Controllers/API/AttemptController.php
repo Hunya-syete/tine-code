@@ -19,15 +19,23 @@ class AttemptController extends Controller
             'answers.*.selected_option' => ['required', 'string'],
         ]);
 
-        $answerKey = $this->answerKeyForQuiz((int) $validated['quiz_id']);
+        $quiz = $this->quizById((int) $validated['quiz_id']);
 
-        if ($answerKey === []) {
+        if ($quiz === null) {
             throw ValidationException::withMessages([
                 'quiz_id' => ['Unknown quiz.'],
             ]);
         }
 
+        /** @var array<int, string> $answerKey */
+        $answerKey = collect($quiz['questions'])
+            ->mapWithKeys(fn (array $question): array => [
+                (int) $question['id'] => (string) $question['correct_option'],
+            ])
+            ->all();
+
         $score = collect($validated['answers'])
+            ->unique('question_id')
             ->filter(function (array $answer) use ($answerKey): bool {
                 $questionId = (int) $answer['question_id'];
                 $selectedOption = (string) $answer['selected_option'];
@@ -45,26 +53,16 @@ class AttemptController extends Controller
         ], 201);
     }
 
-    /**
-     * @return array<int, string>
-     */
-    private function answerKeyForQuiz(int $quizId): array
+    private function quizById(int $quizId): ?array
     {
-        $answerKeys = [
-            1 => [
-                101 => 'B',
-                102 => 'D',
-                103 => 'A',
-                104 => 'C',
-            ],
-            2 => [
-                201 => 'C',
-                202 => 'A',
-                203 => 'B',
-                204 => 'D',
-            ],
-        ];
+        $quizzes = config('quizzes', []);
 
-        return $answerKeys[$quizId] ?? [];
+        foreach ($quizzes as $quiz) {
+            if ((int) ($quiz['id'] ?? 0) === $quizId) {
+                return $quiz;
+            }
+        }
+
+        return null;
     }
 }
