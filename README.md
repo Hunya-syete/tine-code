@@ -19,6 +19,20 @@ This repository contains a **classroom online quiz/exam platform** with:
 - CORS config prepared for local frontend-backend integration
 - Vercel config for Laravel serverless entrypoint (`backend/vercel.json`)
 
+## API payload notes
+
+`POST /api/attempts` now scores attempts using a server-side answer key.
+Send each answer as:
+
+```json
+{
+  "question_id": 101,
+  "selected_option": "B"
+}
+```
+
+Do not send client-computed correctness flags (`is_correct`) because they are ignored for grading integrity.
+
 ## Local setup
 
 ### 1) Frontend
