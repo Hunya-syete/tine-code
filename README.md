@@ -23,6 +23,20 @@ This repository contains a **portfolio/resume website** for Christine June M. Ju
 - API-powered content so you can update resume data from the backend
 - Vercel-ready setup for both frontend and backend
 
+## API payload notes
+
+`POST /api/attempts` now scores attempts using a server-side answer key.
+Send each answer as:
+
+```json
+{
+  "question_id": 101,
+  "selected_option": "B"
+}
+```
+
+Do not send client-computed correctness flags (`is_correct`) because they are ignored for grading integrity.
+
 ## Local setup
 
 ## 1) Backend (Laravel)
