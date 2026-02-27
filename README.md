@@ -1,57 +1,27 @@
-# Portfolio Web App (Next.js + Laravel + Vercel)
+# Online Quiz / Exam Website (Next.js + Laravel + Vercel)
 
 This repository contains a **portfolio/resume website** for Christine June M. Jumawan with:
 
-- **Frontend**: Next.js 15 (App Router + TypeScript + Tailwind)
-- **Backend**: Laravel API that serves resume data
+- **Frontend**: Next.js (App Router + TypeScript + Tailwind)
+- **Backend**: Laravel API (quiz listing + attempt submission)
 - **Deployment target**: Vercel (frontend + backend as separate projects)
 
 ## Project structure
 
-- `frontend/` — Next.js portfolio UI
-- `backend/` — Laravel API (`GET /api/resume`)
+- `frontend/` — Next.js app for students
+- `backend/` — Laravel API for quizzes and exam attempts
 
-## Features
+## Features included
 
-- Modern responsive one-page portfolio
-- Resume sections:
-  - Profile summary and contacts
-  - Work experience
-  - Education
-  - Skills
-  - Certificates
-- API-powered content so you can update resume data from the backend
-- Vercel-ready setup for both frontend and backend
-
-## API payload notes
-
-`POST /api/attempts` now scores attempts using a server-side answer key.
-Send each answer as:
-
-```json
-{
-  "question_id": 101,
-  "selected_option": "B"
-}
-```
-
-Do not send client-computed correctness flags (`is_correct`) because they are ignored for grading integrity.
+- Student dashboard showing available quizzes
+- Laravel API endpoint to fetch quizzes (`GET /api/quizzes`)
+- Laravel API endpoint to submit attempts (`POST /api/attempts`)
+- CORS config prepared for local frontend-backend integration
+- Vercel config for Laravel serverless entrypoint (`backend/vercel.json`)
 
 ## Local setup
 
-## 1) Backend (Laravel)
-
-```bash
-cd backend
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan serve
-```
-
-API will be available at: `http://127.0.0.1:8000/api/resume`
-
-## 2) Frontend (Next.js)
+### 1) Frontend
 
 ```bash
 cd frontend
@@ -61,34 +31,32 @@ cp .env.example .env.local 2>/dev/null || true
 npm run dev
 ```
 
-App will be available at: `http://127.0.0.1:3000`
+### 2) Backend
+
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+mkdir -p database && touch database/database.sqlite
+php artisan migrate
+php artisan serve
+```
 
 ## Vercel deployment
 
-### Frontend deployment
+### Frontend (Next.js)
 
-1. Create a Vercel project using `frontend/` as root.
-2. Set env var `NEXT_PUBLIC_API_URL` to your backend URL (e.g. `https://<backend-domain>/api`).
+1. Create a new Vercel project from `frontend/`.
+2. Add env var `NEXT_PUBLIC_API_URL` pointing to your deployed Laravel API URL.
 3. Deploy.
 
-### Backend deployment
+### Backend (Laravel)
 
-1. Create another Vercel project using `backend/` as root.
-2. Vercel uses `backend/vercel.json` and routes all requests to `api/index.php`.
-3. Set environment variables in Vercel (`APP_KEY`, `APP_ENV`, DB settings if needed).
-4. Deploy.
+1. Create another Vercel project from `backend/`.
+2. Vercel will use `backend/vercel.json` and route requests to `api/index.php`.
+3. Configure environment variables (`APP_KEY`, DB credentials, etc.) in Vercel.
 
-## API endpoint
+## Notes
 
-- `GET /api/resume` → returns complete resume data used by the frontend.
-
-## Live attendance QR system
-
-A full attendance module is available at `frontend/src/app/attendance/page.tsx` and backed by Laravel API endpoints:
-
-- `POST /api/auth/login` - secure token-based teacher login
-- `GET /api/attendance/qr` - generate signed/expiring QR token
-- `POST /api/attendance/scan` - server-side QR verification + Present/Late classification
-- `GET /api/attendance/logs` - fetch live audit logs
-
-Default demo credentials are configured in `backend/config/attendance.php` (`teacher` / `teacher123`).
+Because package registries may be restricted in some environments, this repository includes the source scaffold but expects dependency installation in your own machine/CI.
