@@ -81,6 +81,35 @@ Or, if you use **PowerShell 7+**, you can also run:
 mkdir -Force database; New-Item -ItemType File -Force database\database.sqlite
 ```
 
+
+## Fix for Git error: `pathspec ... did not match any file(s) known to git`
+
+If you see:
+
+```text
+error: pathspec 'codex/create-webapp-portfolio-with-next.js-and-laravel-...' did not match any file(s) known to git
+```
+
+that branch does not exist locally. Use one of these commands:
+
+```bash
+# See available local and remote branches
+git branch -a
+
+# Create and switch to a new branch
+git switch -c codex/create-webapp-portfolio-with-next-js-and-laravel
+
+# OR switch to an existing branch (example)
+git switch work
+```
+
+If you expected a remote branch, fetch first:
+
+```bash
+git fetch --all --prune
+git branch -a
+```
+
 ## Vercel deployment
 
 ### Frontend
