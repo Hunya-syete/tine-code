@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\AttemptController;
-use App\Http\Controllers\API\QuizController;
+use App\Http\Controllers\API\ResumeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/quizzes', [QuizController::class, 'index']);
-Route::post('/attempts', [AttemptController::class, 'store']);
+Route::get('/resume', [ResumeController::class, 'show']);

@@ -2,8 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Class Quiz Portal",
-  description: "Online quiz and exam portal powered by Next.js + Laravel",
+  title: "Christine Jumawan | Portfolio",
+  description: "Personal portfolio and resume powered by Next.js and Laravel API.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
