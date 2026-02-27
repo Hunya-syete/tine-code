@@ -81,3 +81,14 @@ App will be available at: `http://127.0.0.1:3000`
 ## API endpoint
 
 - `GET /api/resume` → returns complete resume data used by the frontend.
+
+## Live attendance QR system
+
+A full attendance module is available at `frontend/src/app/attendance/page.tsx` and backed by Laravel API endpoints:
+
+- `POST /api/auth/login` - secure token-based teacher login
+- `GET /api/attendance/qr` - generate signed/expiring QR token
+- `POST /api/attendance/scan` - server-side QR verification + Present/Late classification
+- `GET /api/attendance/logs` - fetch live audit logs
+
+Default demo credentials are configured in `backend/config/attendance.php` (`teacher` / `teacher123`).
