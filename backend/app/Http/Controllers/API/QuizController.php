@@ -9,23 +9,20 @@ class QuizController extends Controller
 {
     public function index(): JsonResponse
     {
+        $quizzes = collect(config('quizzes', []))
+            ->map(function (array $quiz): array {
+                return [
+                    'id' => (int) $quiz['id'],
+                    'title' => (string) $quiz['title'],
+                    'description' => (string) $quiz['description'],
+                    'duration_minutes' => (int) $quiz['duration_minutes'],
+                    'total_questions' => count($quiz['questions'] ?? []),
+                ];
+            })
+            ->values();
+
         return response()->json([
-            'data' => [
-                [
-                    'id' => 1,
-                    'title' => 'Mathematics Midterm',
-                    'description' => 'Algebra and geometry multiple-choice quiz.',
-                    'duration_minutes' => 45,
-                    'total_questions' => 30,
-                ],
-                [
-                    'id' => 2,
-                    'title' => 'Science Unit Test',
-                    'description' => 'Physics and chemistry concepts for class exam.',
-                    'duration_minutes' => 35,
-                    'total_questions' => 25,
-                ],
-            ],
+            'data' => $quizzes,
         ]);
     }
 }
