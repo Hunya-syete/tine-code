@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { QuizCard } from "@/components/quiz-card";
 import { fetchQuizzes } from "@/lib/api";
 
@@ -17,6 +19,12 @@ export default async function Home() {
         <p className="text-sm uppercase tracking-wide text-indigo-600">Classroom Portal</p>
         <h1 className="text-3xl font-bold">Online Quiz / Exam Website</h1>
         <p className="mt-2 text-slate-600">Take class exams online with auto-graded objective questions.</p>
+        <Link
+          href="/attendance"
+          className="mt-4 inline-flex rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+        >
+          Open QR Attendance App
+        </Link>
       </header>
 
       {error ? (
