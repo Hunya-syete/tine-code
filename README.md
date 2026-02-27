@@ -1,27 +1,30 @@
-# Online Quiz / Exam Website (Next.js + Laravel + Vercel)
+# Portfolio Web App (Next.js + PHP API + Vercel)
 
-This repository contains a **classroom online quiz/exam platform** with:
+This repository contains a **portfolio/resume website** for Christine June M. Jumawan with:
 
-- **Frontend**: Next.js (App Router + TypeScript + Tailwind)
-- **Backend**: Laravel API (quiz listing + attempt submission)
+- **Frontend**: Next.js 15 (App Router + TypeScript + Tailwind)
+- **Backend**: PHP API serving resume JSON at `GET /api/resume`
 - **Deployment target**: Vercel (frontend + backend as separate projects)
 
 ## Project structure
 
-- `frontend/` — Next.js app for students
-- `backend/` — Laravel API for quizzes and exam attempts
-
-## Features included
-
-- Student dashboard showing available quizzes
-- Laravel API endpoint to fetch quizzes (`GET /api/quizzes`)
-- Laravel API endpoint to submit attempts (`POST /api/attempts`)
-- CORS config prepared for local frontend-backend integration
-- Vercel config for Laravel serverless entrypoint (`backend/vercel.json`)
+- `frontend/` — Next.js portfolio UI
+- `backend/` — API for resume data
 
 ## Local setup
 
-### 1) Frontend
+### 1) Backend
+
+```bash
+cd backend
+cp .env.example .env
+php artisan key:generate
+php artisan serve
+```
+
+Backend URL: `http://127.0.0.1:8000/api/resume`
+
+### 2) Frontend
 
 ```bash
 cd frontend
@@ -31,32 +34,45 @@ cp .env.example .env.local 2>/dev/null || true
 npm run dev
 ```
 
-### 2) Backend
+Frontend URL: `http://127.0.0.1:3000`
 
-```bash
-cd backend
-composer install
-cp .env.example .env
+## Fix for `Could not open input file: artisan`
+
+If you see this in PowerShell:
+
+```text
+Could not open input file: artisan
+```
+
+It means your current folder does not contain the `artisan` file.
+
+Use:
+
+```powershell
+cd C:\Users\renny\tine-code\backend
+Get-ChildItem artisan
 php artisan key:generate
-mkdir -p database && touch database/database.sqlite
-php artisan migrate
 php artisan serve
 ```
 
+If you also see:
+
+```text
+PHP Warning: Module "openssl" is already loaded
+```
+
+You likely enabled `extension=openssl` twice in your `php.ini` files (CLI vs Apache). Keep only one entry and restart terminal.
+
 ## Vercel deployment
 
-### Frontend (Next.js)
+### Frontend
 
-1. Create a new Vercel project from `frontend/`.
-2. Add env var `NEXT_PUBLIC_API_URL` pointing to your deployed Laravel API URL.
+1. Create a Vercel project from `frontend/`.
+2. Set `NEXT_PUBLIC_API_URL` to your backend URL (e.g. `https://<backend-domain>/api`).
 3. Deploy.
 
-### Backend (Laravel)
+### Backend
 
-1. Create another Vercel project from `backend/`.
-2. Vercel will use `backend/vercel.json` and route requests to `api/index.php`.
-3. Configure environment variables (`APP_KEY`, DB credentials, etc.) in Vercel.
-
-## Notes
-
-Because package registries may be restricted in some environments, this repository includes the source scaffold but expects dependency installation in your own machine/CI.
+1. Create a Vercel project from `backend/`.
+2. Vercel will use `backend/vercel.json` and `backend/api/index.php`.
+3. Deploy.

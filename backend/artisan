@@ -1,0 +1,70 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$command = $argv[1] ?? null;
+$backendRoot = __DIR__;
+
+if ($command === null) {
+    echo "Available commands:\n";
+    echo "  php artisan key:generate\n";
+    echo "  php artisan serve [--host=127.0.0.1] [--port=8000]\n";
+    exit(0);
+}
+
+if ($command === 'key:generate') {
+    $envPath = $backendRoot . '/.env';
+    if (!file_exists($envPath)) {
+        $example = $backendRoot . '/.env.example';
+        if (!file_exists($example)) {
+            fwrite(STDERR, "Missing .env.example file.\n");
+            exit(1);
+        }
+
+        copy($example, $envPath);
+    }
+
+    $env = file_get_contents($envPath);
+    if ($env === false) {
+        fwrite(STDERR, "Unable to read .env file.\n");
+        exit(1);
+    }
+
+    $appKey = 'base64:' . base64_encode(random_bytes(32));
+
+    if (preg_match('/^APP_KEY=.*$/m', $env) === 1) {
+        $env = preg_replace('/^APP_KEY=.*$/m', 'APP_KEY=' . $appKey, $env);
+    } else {
+        $env .= PHP_EOL . 'APP_KEY=' . $appKey . PHP_EOL;
+    }
+
+    file_put_contents($envPath, $env);
+
+    echo "Application key set successfully: {$appKey}\n";
+    exit(0);
+}
+
+if ($command === 'serve') {
+    $host = '127.0.0.1';
+    $port = '8000';
+
+    foreach ($argv as $arg) {
+        if (str_starts_with($arg, '--host=')) {
+            $host = substr($arg, 7);
+        }
+
+        if (str_starts_with($arg, '--port=')) {
+            $port = substr($arg, 7);
+        }
+    }
+
+    $docRoot = $backendRoot . '/public';
+    $cmd = sprintf('php -S %s:%s -t %s', escapeshellarg($host), escapeshellarg($port), escapeshellarg($docRoot));
+
+    passthru($cmd, $exitCode);
+    exit($exitCode);
+}
+
+fwrite(STDERR, "Unknown command: {$command}\n");
+exit(1);
