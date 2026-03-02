@@ -1,23 +1,31 @@
-# Online Quiz / Exam Website (Next.js + Laravel + Vercel)
+# Inventory Management System (Next.js + Tailwind + Laravel-style API)
 
-This repository contains a **portfolio/resume website** for Christine June M. Jumawan with:
+This repository now contains a full-stack inventory system with:
 
-- **Frontend**: Next.js (App Router + TypeScript + Tailwind)
-- **Backend**: Laravel API (quiz listing + attempt submission)
+- **Frontend**: Next.js (App Router + TypeScript + Tailwind CSS)
+- **Backend**: PHP/Laravel-style API endpoints for inventory CRUD
 - **Deployment target**: Vercel (frontend + backend as separate projects)
+
+## Features
+
+- Inventory dashboard with total SKU count and total stock value
+- Create, edit, and delete inventory items
+- Categories, SKU, quantity, and pricing support
+- API endpoints for listing and mutating inventory
+- Vercel-ready backend routing via `backend/vercel.json`
 
 ## Project structure
 
-- `frontend/` — Next.js app for students
-- `backend/` — Laravel API for quizzes and exam attempts
+- `frontend/` — Next.js UI for inventory operations
+- `backend/` — API service entrypoint (`public/index.php`) and inventory seed/data files
 
-## Features included
+## API routes
 
-- Student dashboard showing available quizzes
-- Laravel API endpoint to fetch quizzes (`GET /api/quizzes`)
-- Laravel API endpoint to submit attempts (`POST /api/attempts`)
-- CORS config prepared for local frontend-backend integration
-- Vercel config for Laravel serverless entrypoint (`backend/vercel.json`)
+- `GET /api/health` — health check
+- `GET /api/items` — list inventory items
+- `POST /api/items` — create item
+- `PUT /api/items/{id}` — update item
+- `DELETE /api/items/{id}` — delete item
 
 ## Local setup
 
@@ -35,28 +43,29 @@ npm run dev
 
 ```bash
 cd backend
-composer install
-cp .env.example .env
-php artisan key:generate
-mkdir -p database && touch database/database.sqlite
-php artisan migrate
-php artisan serve
+php -S 127.0.0.1:8000 -t public
 ```
 
-## Vercel deployment
+The API persists data to `backend/data/inventory-db.json` and auto-seeds from `backend/data/inventory.php` on first run.
 
-### Frontend (Next.js)
+## Deploy to Vercel
 
-1. Create a new Vercel project from `frontend/`.
-2. Add env var `NEXT_PUBLIC_API_URL` pointing to your deployed Laravel API URL.
+### Frontend deployment
+
+1. Import this repository into Vercel and set **Root Directory** to `frontend`.
+2. Set environment variable:
+   - `NEXT_PUBLIC_API_URL=https://<your-backend-vercel-domain>/api`
 3. Deploy.
 
-### Backend (Laravel)
+### Backend deployment
 
-1. Create another Vercel project from `backend/`.
-2. Vercel will use `backend/vercel.json` and route requests to `api/index.php`.
-3. Configure environment variables (`APP_KEY`, DB credentials, etc.) in Vercel.
+1. Create another Vercel project from the same repository with **Root Directory** set to `backend`.
+2. Ensure `backend/vercel.json` is detected.
+3. Deploy.
+4. Confirm endpoint responds:
+   - `https://<your-backend-vercel-domain>/api/health`
 
 ## Notes
 
-Because package registries may be restricted in some environments, this repository includes the source scaffold but expects dependency installation in your own machine/CI.
+- This backend implementation uses a lightweight Laravel-style API entrypoint for compatibility with constrained environments.
+- For production at scale, replace file-based persistence with a managed database.
